@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Advanced Expense Tracker</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+<div class="container">
+    <header> 💰 Expense Tracker Dashboard </header>
+
+    <!-- Dashboard Cards -->
+     <div class="container my-5">
+    <div class="row justify-content-center text-center g-4">
+
+        <div class="col-md-3">
+            <div class="card p-4 shadow">
+                <h3>Total Expenses</h3>
+                <div class="amount-box">₹{{ total }}</div>
+
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-4 shadow">
+                <h3>Charts</h3>
+                <a href="/charts" class="btn-custom">View Charts</a>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-4 shadow">
+                <h3>Export</h3>
+                <a href="{{ url_for('export_csv') }}" class="btn-custom">Download CSV</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+    <!-- Add Expense Form -->
+    <form action="/add" method="POST" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <input type="text" name="title" placeholder="Title" class="form-control" required>
+        </div>
+        <div class="col-md-2">
+            <input type="number" name="amount" placeholder="Amount" step="0.01" class="form-control" required>
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="date" class="form-control" required>
+        </div>
+        <div class="col-md-3">
+            <select name="category" class="form-select" required>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Others">Others</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+       <button type="submit" class="btn-custom">Add Expense</button>
+        </div>
+    </form>
+
+    <!-- Filter Form -->
+    <h2>Filter Expenses</h2>
+    <form action="/filter" method="GET" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <select name="category" class="form-select">
+                <option value="All" {% if category_filter == "All" %}selected{% endif %}>All Categories</option>
+                <option value="Food" {% if category_filter == "Food" %}selected{% endif %}>Food</option>
+                <option value="Transport" {% if category_filter == "Transport" %}selected{% endif %}>Transport</option>
+                <option value="Shopping" {% if category_filter == "Shopping" %}selected{% endif %}>Shopping</option>
+                <option value="Others" {% if category_filter == "Others" %}selected{% endif %}>Others</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
+        </div>
+        <div class="col-md-3">
+            <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
+        </div>
+        <div class="col-md-3">
+<button type="submit" class="btn-custom w-100">Filter</button>
+
+     </div>
+    </form>
+
+    <!-- Expenses Table -->
+    <h2>Expenses</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        
+<tbody>
+    {% for expense in expenses %}
+    <tr>
+        <td>{{ expense[1] }}</td>
+        <td>{{ expense[2] }}</td>
+        <td>{{ expense[3] }}</td>
+        <td>{{ expense[4] }}</td>
+        <td>
+            
+          
+           <!-- ✅ Action buttons -->
+     <a href="{{ url_for('edit_expense',expense_id=expense[0]) }}" 
+     class="btn-edit">Edit</a>
+     <a href="{{ url_for('delete_expense', id=expense[0]) }}" class="btn-delete">Delete
+</a>
+ 
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+</div>
+</body>
+</html>
